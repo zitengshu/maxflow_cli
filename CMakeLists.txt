@@ -22,4 +22,11 @@ if (EXISTS "${PATH_TO_CMAKELISTS_TXT}")
     Some junk files were created in this folder (CMakeCache.txt, CMakeFiles); you should delete those.")
 endif ()
 
+add_subdirectory(external/json)
+
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/src/maxflow.cpp)
+
+target_include_directories(${PROJECT_NAME} 
+    PUBLIC external/json/include)
+target_link_directories(${PROJECT_NAME} 
+    PUBLIC external/json/src)

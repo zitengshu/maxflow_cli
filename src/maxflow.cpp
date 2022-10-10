@@ -1,25 +1,53 @@
 #include <iostream>
 #include "graph.hpp"
+#include <fstream>
+#include <limits>
+#include <iomanip>
+#include <nlohmann/json.hpp>
 
-int main() {
-    Graph<int> g(6);
-    g.AddLink(0, 1, 16); 
-	g.AddLink(0, 2, 13); 
-	g.AddLink(1, 2, 10); 
-	g.AddLink(1, 3, 12); 
-	g.AddLink(2, 4, 14); 
-	g.AddLink(3, 2, 9); 
-	g.AddLink(3, 5, 20); 
-	g.AddLink(4, 3, 7); 
-	g.AddLink(4, 5, 4); 
+#define MAX_CAP 0x3FFFFFFF
 
-    std::cout << "Max Flow: " << g.MaxFlow(0, 5) << std::endl;
-	auto adj = g.GetLinks();
+using json = nlohmann::json;
 
-	for (int i=0; i < adj.size(); i++) {
-		for (auto &link: adj[i]) {
-			std::cout << i << "->" << link.v << ": " << link.flow << std::endl;
+int main(int argc, char *argv[]) {
+	std::ifstream f(argv[1]);
+	json data = json::parse(f);
+
+	int node_num = data["node_num"].get<int>();
+	auto source_nodes = data["source_nodes"].get<std::vector<int>>();
+	auto sink_nodes = data["sink_nodes"].get<std::vector<int>>();
+
+	int source = node_num;
+	int sink = source + 1;
+
+    Graph<int> g(node_num+2);
+	for (auto &[u, u_adj] : data["nodes"].items()) {
+		for (auto &[v, cap] : u_adj.items()) {
+			// std::cout << std::stoi(u) << "->" << std::stoi(v) << ": " << cap.get<int>() << std::endl;
+			g.AddLink(std::stoi(u), std::stoi(v), cap);
 		}
 	}
+	for (auto &s : source_nodes) {
+		g.AddLink(source, s, MAX_CAP);
+	}
+	for (auto &t : sink_nodes) {
+		g.AddLink(t, sink, MAX_CAP);
+	}
+	int max_flow = g.MaxFlow(source, sink);
+    std::cout << "Max Flow: " << max_flow << std::endl;
+	auto adj = g.GetLinks();
+
+	json res = {{"node_num", node_num}, {"source_nodes", source_nodes}, {"sink_nodes", sink_nodes}, {"max_flow", max_flow}};
+	for (int i=0; i < node_num; i++) {
+		std::string u = std::to_string(i);
+		for (auto &link: adj[i]) {
+			if (link.v < node_num) {
+				// std::cout << i << "->" << link.v << ": " << link.flow << std::endl;
+				res["nodes"][u][std::to_string(link.v)] = link.flow;
+			}
+		}
+	}
+	std::ofstream out(argv[2]);
+	out << std::setw(4) << res << std::endl;
     return 0;
 }

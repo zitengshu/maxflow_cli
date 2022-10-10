@@ -1,3 +1,3 @@
 #! /bin/sh
 
-cd build ; ./MaxFlow
+cd build ; ./MaxFlow ../example/topology.json flow_dist.json
