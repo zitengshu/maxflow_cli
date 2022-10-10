@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
 	for (int i=0; i < node_num; i++) {
 		std::string u = std::to_string(i);
 		for (auto &link: adj[i]) {
-			if (link.v < node_num) {
+			if (link.v < node_num && link.flow > 0) {
 				res["nodes"][u][std::to_string(link.v)] = link.flow;
 			}
 		}
