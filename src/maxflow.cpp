@@ -20,10 +20,9 @@ int main(int argc, char *argv[]) {
 	int source = node_num;
 	int sink = source + 1;
 
-    Graph<int> g(node_num+2);
+  Graph<int> g(node_num+2);
 	for (auto &[u, u_adj] : data["nodes"].items()) {
 		for (auto &[v, cap] : u_adj.items()) {
-			// std::cout << std::stoi(u) << "->" << std::stoi(v) << ": " << cap.get<int>() << std::endl;
 			g.AddLink(std::stoi(u), std::stoi(v), cap);
 		}
 	}
@@ -34,7 +33,7 @@ int main(int argc, char *argv[]) {
 		g.AddLink(t, sink, MAX_CAP);
 	}
 	int max_flow = g.MaxFlow(source, sink);
-    std::cout << "Max Flow: " << max_flow << std::endl;
+  std::cout << "Max Flow: " << max_flow << std::endl;
 	auto adj = g.GetLinks();
 
 	json res = {{"node_num", node_num}, {"source_nodes", source_nodes}, {"sink_nodes", sink_nodes}, {"max_flow", max_flow}};
@@ -42,7 +41,6 @@ int main(int argc, char *argv[]) {
 		std::string u = std::to_string(i);
 		for (auto &link: adj[i]) {
 			if (link.v < node_num) {
-				// std::cout << i << "->" << link.v << ": " << link.flow << std::endl;
 				res["nodes"][u][std::to_string(link.v)] = link.flow;
 			}
 		}
