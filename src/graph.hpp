@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <vector>
 #include <queue>
 #include <algorithm>
@@ -70,7 +71,7 @@ auto Graph<T>::BFS(int s, int t) -> bool {
             }
         }
     }
-    return (level[t] > 0);
+    return (level[t] >= 0);
 }
 
 template<class T>
@@ -81,7 +82,7 @@ auto Graph<T>::DFS(int u, int v, T flow) -> T {
     for (auto &link: adj[u]) {
         if (level[link.v] == next_level && link.flow < link.cap) {
             T res_flow = std::min(flow, link.cap - link.flow);
-            int max_flow = DFS(link.v, v, res_flow);
+            T max_flow = DFS(link.v, v, res_flow);
             if (max_flow > 0) {
                 link.flow += max_flow;
                 adj[link.v][link.rev].flow -= max_flow;

@@ -12,32 +12,32 @@
 using json = nlohmann::json;
 
 int main(int argc, char *argv[]) {
-  int node_num = 20;
-  int source_num = 3;
-  int sink_num = 2;
+  int node_num = 5;
+  int source_num = 1;
+  int sink_num = 1;
 
   int source = node_num;
 	int sink = source + 1;
 
   int max_loop = node_num - 1;
 
-  std::default_random_engine node_generator;
+  std::random_device node_generator;
   std::uniform_int_distribution<int> node_distribution(0, 1);
 
-  std::default_random_engine cap_generator;
+  std::random_device cap_generator;
   std::uniform_int_distribution<int> cap_distribution(0, 2);
 
-  std::default_random_engine source_generator;
+  std::random_device source_generator;
   std::uniform_int_distribution<int> source_distribution(0, max_loop);
 
-  std::default_random_engine sink_generator;
+  std::random_device sink_generator;
   std::uniform_int_distribution<int> sink_distribution(0, max_loop);
 
   std::unordered_set<int> source_set;
   std::unordered_set<int> sink_set;
 
 
-  int link_caps[3] = {10, 40, 100};
+  double link_caps[3] = {10.1, 40.1, 100.1};
 
   Graph<double> g(node_num+2);
   for (int i=0; i < max_loop; ++i) {
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
     while (source_set.count(source_node)) {
       source_node = source_distribution(source_generator);
     }
-    g.AddLink(source, source_node, MAX_CAP);
+    g.AddLink(source, source_node, static_cast<double>(MAX_CAP));
     source_set.insert(source_node);
   }
 
@@ -62,11 +62,11 @@ int main(int argc, char *argv[]) {
     while (source_set.count(sink_node) || sink_set.count(sink_node)) {
       sink_node = sink_distribution(sink_generator);
     }
-    g.AddLink(sink_node, sink, MAX_CAP);
+    g.AddLink(sink_node, sink, static_cast<double>(MAX_CAP));
     sink_set.insert(sink_node);
   }
 
-  int max_flow = g.MaxFlow(source, sink);
+  double max_flow = g.MaxFlow(source, sink);
   std::cout << "Max Flow: " << max_flow << std::endl;
 	auto adj = g.GetLinks();
   
