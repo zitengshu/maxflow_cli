@@ -25,8 +25,14 @@ endif ()
 add_subdirectory(external/json)
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/src/maxflow.cpp)
+add_executable(test ${PROJECT_SOURCE_DIR}/src/simulator.cpp)
 
 target_include_directories(${PROJECT_NAME} 
     PUBLIC external/json/include)
 target_link_directories(${PROJECT_NAME} 
+    PUBLIC external/json/src)
+
+target_include_directories(test 
+    PUBLIC external/json/include)
+target_link_directories(test 
     PUBLIC external/json/src)
